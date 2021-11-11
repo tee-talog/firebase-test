@@ -22,14 +22,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, useRouter } from '@nuxtjs/composition-api'
+import {
+  defineComponent,
+  ref,
+  useContext,
+  useRouter,
+} from '@nuxtjs/composition-api'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import type { User } from 'firebase/auth'
 
-import '@/modules/firebase'
+import { initialize } from '@/modules/firebase'
 
 export default defineComponent({
   setup() {
+    const context = useContext()
+    initialize(context.$config)
+
     const auth = getAuth()
     const router = useRouter()
 

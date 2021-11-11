@@ -32,7 +32,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, useRouter } from '@nuxtjs/composition-api'
+import {
+  defineComponent,
+  ref,
+  useContext,
+  useRouter,
+} from '@nuxtjs/composition-api'
 import {
   browserLocalPersistence,
   getAuth,
@@ -40,10 +45,13 @@ import {
   signInWithEmailAndPassword,
 } from 'firebase/auth'
 
-import '@/modules/firebase'
+import { initialize } from '@/modules/firebase'
 
 export default defineComponent({
   setup() {
+    const context = useContext()
+    initialize(context.$config)
+
     const email = ref('')
     const password = ref('')
 
