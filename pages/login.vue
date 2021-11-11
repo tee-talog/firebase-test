@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="login">
     <section class="p-2">
-      <h1>ユーザー登録</h1>
-      <form @submit.prevent="createUser">
+      <h1>ログイン</h1>
+      <form @submit.prevent="login">
         <label>
           <span>メールアドレス</span>
           <input
@@ -24,20 +24,21 @@
           type="submit"
           class="border-solid border-2 border-gray-600 rounded py-1 px-4"
         >
-          submit
+          login
         </button>
       </form>
-    </section>
-
-    <section class="p-2">
-      <nuxt-link to="login">login</nuxt-link>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@nuxtjs/composition-api'
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
+import { defineComponent, ref, useRouter } from '@nuxtjs/composition-api'
+import {
+  browserLocalPersistence,
+  getAuth,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from 'firebase/auth'
 
 import '@/modules/firebase'
 
@@ -46,17 +47,21 @@ export default defineComponent({
     const email = ref('')
     const password = ref('')
 
-    const createUser = async () => {
+    const router = useRouter()
+
+    const login = async () => {
       const auth = getAuth()
       auth.languageCode = 'ja'
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(
+        await setPersistence(auth, browserLocalPersistence)
+        const userCredential = await signInWithEmailAndPassword(
           auth,
           email.value,
           password.value
         )
         console.log(userCredential)
+        router.push('/secret')
       } catch (e: unknown) {
         console.log(e)
       }
@@ -65,7 +70,7 @@ export default defineComponent({
     return {
       email,
       password,
-      createUser,
+      login,
     }
   },
 })
